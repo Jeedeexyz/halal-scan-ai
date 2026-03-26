@@ -1,50 +1,138 @@
-# Welcome to your Expo app 👋
+# Halal Scan AI
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A universal multilingual **Islamic food guidance chat app** built with Expo + React Native.
 
-## Get started
+The app lets users:
+- ask halal/haram food questions in any language style,
+- send ingredient text and product images,
+- get structured AI answers with Islamic references,
+- keep chat history in a drawer with latest chats first.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+- **AI chat powered by Gemini**
+- **Image + text input** (camera/gallery support)
+- **Halal verdicts**: `halal`, `haram`, `mashbooh`, `not-food`, `general`
+- **Language auto-detection** from user input
+- **Persistent chat history** using AsyncStorage
+- **Recent chats in drawer** with **New Chat** flow
+- **Title generation** from first user message
+- **Sorted sessions** by latest `updatedAt`
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- [Expo](https://expo.dev/)
+- React Native
+- Expo Router
+- AsyncStorage
+- Gemini API (Google Generative Language API)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## Project Structure
 
-When you're ready, run:
+- `app/`
+  - `_layout.tsx` — app navigation and drawer setup
+  - `index.tsx` — main chat screen
+- `components/chat/`
+  - `chat-input.tsx` — input + camera/gallery/send actions
+  - `message-bubble.tsx` — user/assistant message UI
+- `components/navigation/`
+  - `app-drawer-content.tsx` — custom drawer with recent chats
+  - `header-menu-button.tsx`
+- `lib/`
+  - `gemini.ts` — Gemini request/response handling
+  - `chat-storage.ts` — AsyncStorage chat persistence
+- `types/`
+  - `chat.ts`, `analysis.ts`
+- `data/`
+  - `halal-keywords.json`
+  - `haram-keywords.json`
+  - `mashbooh-keywords.json`
+
+---
+
+## Setup
+
+### 1) Install dependencies
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2) Add environment variable
 
-## Learn more
+Create a `.env` file in project root:
 
-To learn more about developing your project with Expo, look at the following resources:
+```env
+EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+> The app expects `EXPO_PUBLIC_GEMINI_API_KEY`.
 
-## Join the community
+### 3) Run the app
 
-Join our community of developers creating universal apps.
+```bash
+npx expo start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Optional:
+```bash
+npx expo start -c
+```
+(clears Metro cache)
+
+---
+
+## iOS / Android Icons & Splash
+
+Configure assets in `app.json` under:
+- `expo.icon`
+- `expo.splash`
+- `expo.ios.icon`
+- `expo.android.icon`
+- `expo.android.adaptiveIcon`
+
+> Note: Expo Go has limitations for icon/splash preview. For full behavior, use a dev build.
+
+---
+
+## Chat Behavior
+
+- New chats are created in-memory first.
+- Empty chats are **not** saved.
+- A chat is saved after first message is sent.
+- Each response updates:
+  - `messages`
+  - `title` (from first user message)
+  - `updatedAt`
+- Drawer list is loaded from AsyncStorage and ordered by latest chat.
+
+---
+
+## Development Notes
+
+- If drawer history does not refresh, verify `saveChatSession()` emits updates and drawer reloads session list.
+- If input or loader feels delayed, ensure `onSend()` updates local state before awaiting network call.
+- If Gemini returns non-JSON, app falls back to a safe parsed response path.
+
+---
+
+## Scripts (common Expo)
+
+```bash
+npm run start
+npm run android
+npm run ios
+npm run web
+```
+
+---
+
+## License
+
+Private project. Add your preferred license before publishing.
